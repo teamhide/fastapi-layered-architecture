@@ -32,13 +32,7 @@ class UserRepo:
         pass
 
     @abstractmethod
-    def update_user(
-        self,
-        user_id: int = None,
-        password: str = None,
-        email: str = None,
-        nickname: str = None,
-    ) -> Union[User, NoReturn]:
+    def update_user(self, user_id: int, params: dict) -> None:
         pass
 
     @abstractmethod
@@ -78,34 +72,11 @@ class UserMySQLRepo(UserRepo):
         session.add(user)
         return user
 
-    def update_user(
-        self,
-        user_id: int = None,
-        password: str = None,
-        email: str = None,
-        nickname: str = None,
-    ) -> Union[User, NoReturn]:
+    def update_user(self, user_id: int, params: dict) -> None:
         user = session.query(User).get(user_id)
-
-        if not user:
-            raise CustomException(error='user does not exist', code=500)
-
-        if password:
-            user.password = password
-
-        if email:
-            user.email = email
-
-        if nickname:
-            user.nickname = nickname
-
-        session.add(user)
-        return user
+        session.query(User).filter(User.id == user_id).update(params)
 
     def delete_user(self, user_id: int) -> None:
         user = session.query(User).get(user_id)
-
-        if not user:
-            raise CustomException(error='user does not exist', code=500)
-
-        user.delete()
+        if user:
+            session.delete(user)

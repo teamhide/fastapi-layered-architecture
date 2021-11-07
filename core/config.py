@@ -38,3 +38,6 @@ def get_config():
         'production': ProductionConfig(),
     }
     return config_type[env]
+
+
+config = get_config()
