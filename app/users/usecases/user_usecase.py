@@ -4,6 +4,7 @@ from pythondi import inject
 
 from app.users.models import User
 from app.users.repositories import UserRepo
+from core.db import Transaction, Propagation
 from core.exception import CustomException
 
 
@@ -15,10 +16,11 @@ class UserUsecase:
 
 class GetUserListUsecase(UserUsecase):
     async def execute(self, limit: int, prev: Optional[int]) -> List[User]:
-        return self.user_repo.get_user_list(prev=prev, limit=limit)
+        return await self.user_repo.get_user_list(prev=prev, limit=limit)
 
 
 class CreateUserUsecase(UserUsecase):
+    @Transaction(propagation=Propagation.REQUIRED)
     async def execute(
         self,
         email: str,
@@ -29,13 +31,13 @@ class CreateUserUsecase(UserUsecase):
         if password1 != password2:
             raise CustomException(error='password does not match', code=400)
 
-        if self.user_repo.get_user_by_email_or_nickname(
+        if await self.user_repo.get_user_by_email_or_nickname(
                 email=email,
                 nickname=nickname,
         ):
             raise CustomException(error='duplicated email', code=400)
 
-        user = self.user_repo.create_user(
+        user = await self.user_repo.create_user(
             email=email,
             password=password1,
             nickname=nickname,

@@ -12,11 +12,11 @@ class UserRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def get_user_by_id(self, user_id: int) -> Optional[User]:
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
         pass
 
     @abstractmethod
-    def get_user_by_email_or_nickname(
+    async def get_user_by_email_or_nickname(
         self,
         email: str,
         nickname: str,
@@ -24,27 +24,27 @@ class UserRepo:
         pass
 
     @abstractmethod
-    def get_user_list(self, prev: int = None, limit: int = None) -> List[User]:
+    async def get_user_list(self, prev: int = None, limit: int = None) -> List[User]:
         pass
 
     @abstractmethod
-    def create_user(self, email: str, password: str, nickname: str) -> User:
+    async def create_user(self, email: str, password: str, nickname: str) -> User:
         pass
 
     @abstractmethod
-    def update_user(self, user_id: int, params: dict) -> None:
+    async def update_user(self, user_id: int, params: dict) -> None:
         pass
 
     @abstractmethod
-    def delete_user(self, user_id: int) -> None:
+    async def delete_user(self, user_id: int) -> None:
         pass
 
 
 class UserMySQLRepo(UserRepo):
-    def get_user_by_id(self, user_id: int) -> Optional[User]:
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
         return session.query(User).get(user_id)
 
-    def get_user_by_email_or_nickname(
+    async def get_user_by_email_or_nickname(
         self,
         email: str,
         nickname: str,
@@ -56,7 +56,7 @@ class UserMySQLRepo(UserRepo):
             ),
         ).first()
 
-    def get_user_list(self, prev: int = None, limit: int = None) -> List[User]:
+    async def get_user_list(self, prev: int = None, limit: int = None) -> List[User]:
         query = session.query(User)
 
         if prev:
@@ -67,16 +67,15 @@ class UserMySQLRepo(UserRepo):
 
         return query.order_by(User.id.desc()).all()
 
-    def create_user(self, email: str, password: str, nickname: str) -> User:
+    async def create_user(self, email: str, password: str, nickname: str) -> User:
         user = User(email=email, password=password, nickname=nickname)
         session.add(user)
         return user
 
-    def update_user(self, user_id: int, params: dict) -> None:
-        user = session.query(User).get(user_id)
+    async def update_user(self, user_id: int, params: dict) -> None:
         session.query(User).filter(User.id == user_id).update(params)
 
-    def delete_user(self, user_id: int) -> None:
+    async def delete_user(self, user_id: int) -> None:
         user = session.query(User).get(user_id)
         if user:
             session.delete(user)
