@@ -1,10 +1,10 @@
-from enum import Enum
 from functools import wraps
 
 from core.db import session
+from core.enums import BaseEnum
 
 
-class Propagation(str, Enum):
+class Propagation(BaseEnum):
     REQUIRED = "required"
     REQUIRES_NEW = "required_new"
 

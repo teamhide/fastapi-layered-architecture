@@ -6,12 +6,14 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-fastapi = "*"
 alembic = "*"
 sqlalchemy = "*"
-uvicorn = "*"
 pyjwt = "*"
 pymysql = "*"
+uvicorn = {extras = ["standard"],version = ">=0.11.7"}
+fastapi = ">=0.62.0"
+celery = "*"
+gunicorn = "*"
 pythondi = "*"
 
 [requires]

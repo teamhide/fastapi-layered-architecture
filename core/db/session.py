@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker, Session
 
-from core import config
+from core.config import config
 
 session_context: ContextVar[str] = ContextVar("session_context")
 
