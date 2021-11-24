@@ -43,7 +43,7 @@ class UserMySQLRepo(UserRepo):
         )
 
     async def save(self, user: User) -> User:
-        session.add(User)
+        session.add(user)
         return user
 
     async def delete(self, user: User) -> None:
