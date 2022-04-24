@@ -7,9 +7,9 @@ verify_ssl = true
 
 [packages]
 alembic = "*"
-sqlalchemy = "*"
+sqlalchemy = {extras = ["asyncio"], version = ">=1.4.35"}
 pyjwt = "*"
-pymysql = "*"
+aiomysql = "*"
 uvicorn = {extras = ["standard"],version = ">=0.11.7"}
 fastapi = ">=0.62.0"
 celery = "*"

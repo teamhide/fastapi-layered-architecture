@@ -1,9 +1,12 @@
 from contextvars import ContextVar, Token
-from typing import Union
-
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    create_async_engine,
+    async_scoped_session,
+)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session
+from typing import Union
 
 from core.config import config
 
@@ -22,9 +25,10 @@ def reset_session_context(context: Token) -> None:
     session_context.reset(context)
 
 
-engine = create_engine(config.DB_URL, pool_recycle=3600)
-session: Union[Session, scoped_session] = scoped_session(
-    sessionmaker(autocommit=True, autoflush=False, bind=engine),
+engine = create_async_engine(config.DB_URL, pool_recycle=3600)
+async_session_factory = sessionmaker(bind=engine, class_=AsyncSession)
+session: Union[Session, async_scoped_session] = async_scoped_session(
+    session_factory=async_session_factory,
     scopefunc=get_session_id,
 )
 Base = declarative_base()

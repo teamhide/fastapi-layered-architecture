@@ -11,10 +11,10 @@ def create_session(func):
         try:
             await func(*args, **kwargs)
         except Exception as e:
-            session.rollback()
+            await session.rollback()
             raise e
         finally:
-            session.remove()
+            await session.remove()
             reset_session_context(context=context)
 
     return _create_session

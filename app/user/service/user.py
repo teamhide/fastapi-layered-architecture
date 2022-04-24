@@ -4,7 +4,7 @@ from pythondi import inject
 
 from app.user.domain import User
 from app.user.repository import UserRepo
-from core.db import Transaction, Propagation
+from core.db import Transactional, Propagation
 from core.exceptions.user import (
     UserNotFoundException,
     DuplicateEmailOrNicknameException,
@@ -16,7 +16,7 @@ class UserService:
     def __init__(self, user_repo: UserRepo):
         self.user_repo = user_repo
 
-    @Transaction(propagation=Propagation.REQUIRED)
+    @Transactional(propagation=Propagation.REQUIRED)
     async def create_user(
         self, email: str, password1: str, password2: str, nickname: str
     ) -> Union[User, NoReturn]:
@@ -48,7 +48,7 @@ class UserService:
 
         return user
 
-    @Transaction(propagation=Propagation.REQUIRED)
+    @Transactional(propagation=Propagation.REQUIRED)
     async def update_password(
         self, user_id: int, password1: str, password2: str,
     ) -> Union[User, NoReturn]:
