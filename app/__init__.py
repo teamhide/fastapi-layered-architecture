@@ -46,14 +46,17 @@ def on_auth_error(request: Request, exc: Exception):
         message = exc.message
 
     return JSONResponse(
-        status_code=status_code, content={"error_code": error_code, "message": message},
+        status_code=status_code,
+        content={"error_code": error_code, "message": message},
     )
 
 
 def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyMiddleware)
     app.add_middleware(
-        AuthenticationMiddleware, backend=AuthBackend(), on_error=on_auth_error,
+        AuthenticationMiddleware,
+        backend=AuthBackend(),
+        on_error=on_auth_error,
     )
 
 

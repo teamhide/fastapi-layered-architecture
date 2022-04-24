@@ -11,3 +11,6 @@ class UserSchema(BaseModel):
     is_admin: bool = None
     created_at: datetime = None
     updated_at: datetime = None
+
+    class Config:
+        orm_mode = True

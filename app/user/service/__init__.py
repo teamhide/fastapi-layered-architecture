@@ -1,6 +1,7 @@
-from .user import UserService
-
+from .user_command import UserCommandService
+from .user_query import UserQueryService
 
 __all__ = [
-    "UserService",
+    "UserQueryService",
+    "UserCommandService",
 ]

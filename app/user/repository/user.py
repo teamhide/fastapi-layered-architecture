@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import Optional
+from typing import Optional, List
 
-from sqlalchemy import or_
+from sqlalchemy import or_, select
 
 from app.user.domain import User
 from core.db import session
@@ -16,7 +16,9 @@ class UserRepo:
 
     @abstractmethod
     async def get_by_email_or_nickname(
-        self, email: str, nickname: str,
+        self,
+        email: str,
+        nickname: str,
     ) -> Optional[User]:
         pass
 
@@ -31,16 +33,22 @@ class UserRepo:
 
 class UserMySQLRepo(UserRepo):
     async def get_by_id(self, user_id: int) -> Optional[User]:
-        pass
+        return await session.get(User, user_id)
 
     async def get_by_email_or_nickname(
-        self, email: str, nickname: str,
+        self,
+        email: str,
+        nickname: str,
     ) -> Optional[User]:
-        return (
-            session.query(User)
-            .filter(or_(User.email == email, User.nickname == nickname))
-            .first()
+        query = await session.execute(
+            select(User).where(or_(User.email == email, User.nickname == nickname))
         )
+
+        return query.scalars().first()
+
+    async def get_users(self) -> List[User]:
+        query = await session.execute(select(User)).scalars()
+        return query.all()
 
     async def save(self, user: User) -> User:
         session.add(user)

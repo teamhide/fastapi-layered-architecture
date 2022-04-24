@@ -2,9 +2,9 @@ from typing import Union, NoReturn, Optional
 
 from sqlalchemy import Column, Unicode, BigInteger, Boolean
 
+from app.user.exception.user import PasswordDoesNotMatchException
 from core.db import Base
 from core.db.mixins import TimestampMixin
-from core.exceptions.user import PasswordDoesNotMatchException
 
 
 class User(Base, TimestampMixin):
@@ -31,7 +31,10 @@ class User(Base, TimestampMixin):
             raise PasswordDoesNotMatchException
 
         return User(
-            password=password1, email=email, nickname=nickname, is_admin=is_admin,
+            password=password1,
+            email=email,
+            nickname=nickname,
+            is_admin=is_admin,
         )
 
     def change_password(self, password1: str, password2: str) -> Optional[NoReturn]:

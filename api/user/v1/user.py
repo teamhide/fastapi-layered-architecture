@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from api.user.v1.request import CreateUserRequest, UpdatePasswordRequest
 from api.user.v1.response import CreateUserResponse, GetUserResponse
-from app.user.service import UserService
+from app.user.service import UserQueryService, UserCommandService
 from core.fastapi.dependencies import (
     PermissionDependency,
     IsAdmin,
@@ -19,7 +19,7 @@ user_router = APIRouter()
     summary="Create User",
 )
 async def create_user(request: CreateUserRequest):
-    return await UserService().create_user(**request.dict())
+    return await UserCommandService().create_user(**request.dict())
 
 
 @user_router.get(
@@ -30,7 +30,7 @@ async def create_user(request: CreateUserRequest):
     summary="Get User"
 )
 async def get_user(user_id: int):
-    return await UserService().get_user(user_id=user_id)
+    return await UserQueryService().get_user(user_id=user_id)
 
 
 @user_router.put(
@@ -39,6 +39,6 @@ async def get_user(user_id: int):
     summary="Change User Password"
 )
 async def update_password(request: UpdatePasswordRequest, user_id: int):
-    await UserService().update_password(
+    await UserCommandService().update_password(
         user_id=user_id, password1=request.password1, password2=request.password2,
     )
