@@ -26,7 +26,7 @@ class UserCommandService:
         ):
             raise DuplicateEmailOrNicknameException
 
-        user = User().create(
+        user = User.create(
             password1=password1,
             password2=password2,
             email=email,

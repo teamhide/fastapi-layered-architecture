@@ -23,6 +23,10 @@ class UserRepo:
         pass
 
     @abstractmethod
+    async def get_users(self) -> List[User]:
+        pass
+
+    @abstractmethod
     async def save(self, user: User) -> User:
         pass
 

@@ -16,21 +16,23 @@ class User(Base, TimestampMixin):
     nickname = Column(Unicode(255), nullable=False, unique=True)
     is_admin = Column(Boolean, default=False)
 
-    def _is_password_match(self, password1: str, password2: str) -> bool:
+    @classmethod
+    def _is_password_match(cls, password1: str, password2: str) -> bool:
         return password1 == password2
 
+    @classmethod
     def create(
-        self,
+        cls,
         password1: str,
         password2: str,
         email: str,
         nickname: str,
         is_admin: bool = False,
     ) -> Union["User", NoReturn]:
-        if not self._is_password_match(password1=password1, password2=password2):
+        if not cls._is_password_match(password1=password1, password2=password2):
             raise PasswordDoesNotMatchException
 
-        return User(
+        return cls(
             password=password1,
             email=email,
             nickname=nickname,
