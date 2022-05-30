@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 
 from api.user.v1.request import CreateUserRequest, UpdatePasswordRequest
 from api.user.v1.response import CreateUserResponse, GetUserResponse
@@ -42,3 +42,4 @@ async def update_password(request: UpdatePasswordRequest, user_id: int):
     await UserCommandService().update_password(
         user_id=user_id, password1=request.password1, password2=request.password2,
     )
+    return Response(status_code=200)

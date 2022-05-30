@@ -8,6 +8,7 @@ from app.user.exception.user import (
     UserNotFoundException,
 )
 from app.user.repository import UserRepo
+from app.user.schema import UserSchema
 from core.db import Transactional, Propagation
 
 
@@ -19,7 +20,7 @@ class UserCommandService:
     @Transactional(propagation=Propagation.REQUIRED)
     async def create_user(
         self, email: str, password1: str, password2: str, nickname: str
-    ) -> Union[User, NoReturn]:
+    ) -> Union[UserSchema, NoReturn]:
         if await self.user_repo.get_by_email_or_nickname(
             email=email,
             nickname=nickname,
@@ -33,7 +34,7 @@ class UserCommandService:
             nickname=nickname,
         )
         user = await self.user_repo.save(user=user)
-        return user
+        return UserSchema.from_orm(user)
 
     @Transactional(propagation=Propagation.REQUIRED)
     async def update_password(
@@ -41,10 +42,10 @@ class UserCommandService:
         user_id: int,
         password1: str,
         password2: str,
-    ) -> Union[User, NoReturn]:
+    ) -> Union[UserSchema, NoReturn]:
         user = await self.user_repo.get_by_id(user_id=user_id)
         if not user:
             raise UserNotFoundException
 
         user.change_password(password1=password1, password2=password2)
-        return user
+        return UserSchema.from_orm(user)
