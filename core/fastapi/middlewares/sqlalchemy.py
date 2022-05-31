@@ -1,33 +1,22 @@
-from contextvars import ContextVar
 from uuid import uuid4
 
-from fastapi import Request
-from starlette.middleware.base import (
-    BaseHTTPMiddleware,
-    RequestResponseEndpoint,
-)
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from core.db.session import set_session_context, reset_session_context, session
 
-session_context = ContextVar("session_context")
 
+class SQLAlchemyMiddleware:
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
 
-class SQLAlchemyMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app):
-        super().__init__(app)
-
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint,
-    ):
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         session_id = str(uuid4())
         context = set_session_context(session_id=session_id)
 
         try:
-            response = await call_next(request)
+            await self.app(scope, receive, send)
         except Exception as e:
             raise e
         finally:
-            reset_session_context(context=context)
             await session.remove()
-
-        return response
+            reset_session_context(context=context)
