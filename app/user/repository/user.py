@@ -51,8 +51,8 @@ class UserMySQLRepo(UserRepo):
         return query.scalars().first()
 
     async def get_users(self) -> List[User]:
-        query = await session.execute(select(User)).scalars()
-        return query.all()
+        query = await session.execute(select(User))
+        return query.scalars().all()
 
     async def save(self, user: User) -> User:
         session.add(user)
