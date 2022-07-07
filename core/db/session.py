@@ -27,7 +27,7 @@ def reset_session_context(context: Token) -> None:
 
 engine = create_async_engine(config.DB_URL, pool_recycle=3600)
 async_session_factory = sessionmaker(bind=engine, class_=AsyncSession)
-session: Union[Session, async_scoped_session] = async_scoped_session(
+session: Union[AsyncSession, async_scoped_session] = async_scoped_session(
     session_factory=async_session_factory,
     scopefunc=get_session_id,
 )

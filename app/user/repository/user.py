@@ -59,4 +59,4 @@ class UserMySQLRepo(UserRepo):
         return user
 
     async def delete(self, user: User) -> None:
-        session.delete(user)
+        await session.delete(user)
