@@ -1,5 +1,3 @@
-from typing import Union, NoReturn, Optional
-
 from sqlalchemy import Column, Unicode, BigInteger, Boolean
 
 from app.user.exception.user import PasswordDoesNotMatchException
@@ -28,7 +26,7 @@ class User(Base, TimestampMixin):
         email: str,
         nickname: str,
         is_admin: bool = False,
-    ) -> Union["User", NoReturn]:
+    ) -> "User":
         if not cls._is_password_match(password1=password1, password2=password2):
             raise PasswordDoesNotMatchException
 
@@ -39,7 +37,7 @@ class User(Base, TimestampMixin):
             is_admin=is_admin,
         )
 
-    def change_password(self, password1: str, password2: str) -> Optional[NoReturn]:
+    def change_password(self, password1: str, password2: str) -> None:
         if not self._is_password_match(password1=password1, password2=password2):
             raise PasswordDoesNotMatchException
 

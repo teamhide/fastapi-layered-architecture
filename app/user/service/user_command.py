@@ -1,5 +1,3 @@
-from typing import NoReturn, Union
-
 from pythondi import inject
 
 from app.user.domain import User
@@ -20,7 +18,7 @@ class UserCommandService:
     @Transactional(propagation=Propagation.REQUIRED)
     async def create_user(
         self, email: str, password1: str, password2: str, nickname: str
-    ) -> Union[UserSchema, NoReturn]:
+    ) -> UserSchema:
         if await self.user_repo.get_by_email_or_nickname(
             email=email,
             nickname=nickname,
@@ -42,7 +40,7 @@ class UserCommandService:
         user_id: int,
         password1: str,
         password2: str,
-    ) -> Union[UserSchema, NoReturn]:
+    ) -> UserSchema:
         user = await self.user_repo.get_by_id(user_id=user_id)
         if not user:
             raise UserNotFoundException
